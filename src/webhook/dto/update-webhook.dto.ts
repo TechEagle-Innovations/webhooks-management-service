@@ -7,8 +7,15 @@ export class UpdateWebhookDto {
     @IsString()
     callbackLink?: string;
 
-    user: any
+    user?: any
   
     @IsString()
     serviceName?: string;
+
+    @IsString()  
+    @IsNotEmpty()  
+     id: string;
+
+     @IsString()
+     eventName?: string;
   }

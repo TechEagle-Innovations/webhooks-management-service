@@ -1,196 +1,229 @@
+import { IsString, IsOptional } from 'class-validator';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateWebhookDto } from './dto/create-webhook.dto';
 import { UpdateWebhookDto } from './dto/update-webhook.dto';
-import { webhookTopicDocument} from 'src/Schema/webhook.schema';
+import { webhookTopicDocument } from 'src/Schema/webhook.schema';
 import { OnRequest } from 'src/interface/on-request.interface';
+import { FindWebhookDto, FindWebhookDtoRequest } from './dto/find-webhook.dto';
 
+/**
+ * Service for managing webhooks.
+ */
 @Injectable()
 export class WebhookService {
   constructor(
     @InjectModel('webhookinfo') public webhookModel: Model<webhookTopicDocument>,
-  ) {}
+  ) { }
 
+  /**
+   * Creates a new webhook.
+   * @param createWebhookDto DTO containing webhook creation details.
+   * @returns A promise resolving to an object containing the status, message, and created webhook data.
+   */
   async create(createWebhookDto: CreateWebhookDto): Promise<{ status: string; message: string; data?: webhookTopicDocument }> {
     try {
-     
+      // Check if a webhook with the same callback link and user already exists
       const isWebhookAlreadyPresent = await this.isWebhookAlreadyPresent(createWebhookDto);
       if (isWebhookAlreadyPresent) {
         return { status: 'failed', message: 'Webhook already exists' };
       }
-  
+
+      // Prepare user object
       const user = {
-        userId: createWebhookDto.user.userId,
+        // userId: createWebhookDto.user._id,
         userEmail: createWebhookDto.user.userEmail,
       };
-  
+
+      // Prepare webhook data object
       const webhookData = {
-        projectName: createWebhookDto.projectName,
+        projectName: createWebhookDto.user.projectName,
         eventName: createWebhookDto.eventName,
-        userId: createWebhookDto.user.userId,
-        userEmail: createWebhookDto.user.userEmail,
+        userEmail: user.userEmail,
         callbackLink: createWebhookDto.callbackLink,
         serviceName: createWebhookDto.serviceName,
       };
-  
-     
+
+      // Create new webhook document
       const createdWebhook = new this.webhookModel(webhookData);
       await createdWebhook.save();
-  
+
+      // Check if webhook creation was successful
       if (!createdWebhook) {
         return { status: 'failed', message: 'Unable to create webhook' };
       }
-  
+
+      // Return success response
       return {
         status: 'success',
         message: 'Webhook created successfully',
         data: createdWebhook,
       };
-    } catch (err) {
-      console.error('Error occurred while creating the webhook', err);
+  } catch (error) {
+    console.error('Error occurred while creating the webhook', error);
       throw new HttpException(
         {
           statusCode: HttpStatus.FORBIDDEN,
           status: 'Failure',
-          error: err.message || 'Internal Server Error',
+          error: error.message || 'Internal Server Error',
         },
         HttpStatus.FORBIDDEN,
         {
-          cause: err,
+          cause: error,
         },
       );
     }
   }
-  
 
+  /**
+   * Checks if a webhook with the same callback link and user already exists.
+   * @param createWebhookDto DTO containing webhook creation details.
+   * @returns A promise resolving to a boolean indicating whether the webhook already exists.
+   */
   async isWebhookAlreadyPresent(createWebhookDto: CreateWebhookDto): Promise<boolean> {
-    const { callbackLink, user} = createWebhookDto;
-    const webhook = await this.webhookModel.findOne({ callbackLink, user}).exec();
+    const { callbackLink, user } = createWebhookDto;
+    const webhook = await this.webhookModel.findOne({ callbackLink, user }).exec();
     return !!webhook;
   }
 
-  
+  /**
+   * Finds all webhooks based on the provided payload.
+   * @param payload Payload containing user, query parameters, and route parameters.
+   * @returns A promise resolving to an object containing the status, message, and found webhooks.
+   */
+  async find(payload: FindWebhookDtoRequest) {
+    console.log("webhook-create", payload);
 
-  async find(
-    payload: OnRequest, 
-    id?: string
-  ): Promise<{ status: string; message: string; data?: any }> {
+    // Extract necessary information from payload
+    const user = payload.body.user;
+    const query = payload.query;
+    const params = payload.params["id"] ? payload.params["id"].split(",") : [];
+
     try {
-   
-      if (id) {
-        const webhook = await this.webhookModel.findById(id).exec();
-        if (!webhook) {
-          return { status: 'failed', message: `Webhook with id ${id} not found` };
-        }
-        return {
-          status: 'success',
-          message: 'Webhook retrieved successfully',
-          data: webhook,
-        };
-      }
-  
-     
-      const query = payload.query;
-      const params = payload.param ? payload.param.split(',') : [];
-  
+      // Prepare conditions array for filtering
       const conditions: any[] = [];
-  
-      if (query && Object.keys(query).length > 0) {
+      conditions.push({ projectName: user.projectName });
+
+      // Add query parameters to conditions if present
+      if (query && Object.keys(query).length) {
         conditions.push(query);
       }
-  
-      const finalQuery: any = conditions.length > 0 ? { $and: conditions } : {};
-  
-      if (params.length > 0) {
-        finalQuery['_id'] = { $in: params.map(id => id.trim()) };
+
+      // Create query parameter object
+      const queryParam = { $and: conditions };
+
+      // Add _id condition if params are present
+      if (params.length) {
+        queryParam['_id'] = { $in: params };
       }
-  
-      const webhooks = await this.webhookModel.find(finalQuery).sort({ createdAt: 'asc' }).exec();
-  
-      if (webhooks.length > 0) {
-        return {
-          status: 'success',
-          message: 'Webhooks retrieved successfully',
-          data: webhooks,
-        };
-      } else {
-        return {
-          status: 'failed',
-          message: 'No webhooks found',
-        };
+
+      // Execute find query
+      const findAllwebhook = await this.webhookModel.find(queryParam).exec();
+
+      // Check if webhooks were found
+      if (!findAllwebhook.length) {
+        return { status: "failed", message: "Unable to get webhook" };
       }
+
+      // Return successful response with found webhooks
+      return { status: "success", message: "All webhook received successfully", data: findAllwebhook };
     } catch (err) {
-      console.error('Error in retrieving webhooks:', err);
+      console.log(err);
       throw new HttpException(
         {
           statusCode: HttpStatus.FORBIDDEN,
           status: 'Failure',
-          error: err.message || 'Internal Server Error',
+          error: err.response,
         },
         HttpStatus.FORBIDDEN,
         { cause: err },
       );
     }
   }
-  
- 
-  async update(
-    id: string,
-    updateWebhookDto: UpdateWebhookDto,
-): Promise<{ status: string; message: string; data?: webhookTopicDocument }> {
+
+  /**
+   * Updates an existing webhook.
+   * @param id The ID of the webhook to update.
+   * @param updateWebhookDto DTO containing updated webhook details.
+   * @returns A promise resolving to an object containing the status, message, and updated webhook data.
+   */
+  async update(id: string, updateWebhookDto: UpdateWebhookDto): Promise<any> {
+    console.log(id, updateWebhookDto);
+
     try {
-        const existingWebhook = await this.webhookModel.findById(id).exec();
-        
-       
-        if (!existingWebhook) {
-            return { status: 'failed', message: `Webhook with id ${id} not found` };
-        }
+      // Find the webhook to update
+      const foundWebhook = await this.webhookModel.findById(id).exec();
 
-        if (updateWebhookDto.projectName) {
-            existingWebhook.projectName = updateWebhookDto.projectName;
-        }
-        if (updateWebhookDto.user) { 
-            if (updateWebhookDto.user.userEmail) {
-                existingWebhook.userEmail = updateWebhookDto.user.userEmail;
-            }
-            if (updateWebhookDto.user.userId) {
-                existingWebhook.userId = updateWebhookDto.user.userId;
-            }
-        }
-        if (updateWebhookDto.callbackLink) {
-            existingWebhook.callbackLink = updateWebhookDto.callbackLink;
-        }
-        if (updateWebhookDto.serviceName) {
-            existingWebhook.serviceName = updateWebhookDto.serviceName;
-        }
-
-        const updatedWebhook = await existingWebhook.save();
-
+      // Check if webhook exists
+      if (!foundWebhook) {
         return {
-            status: 'success',
-            message: 'Webhook updated successfully',
-            data: updatedWebhook,
+          status: 'failed',
+          message: `Webhook with id ${id} not found`,
         };
+      }
+
+      // Get old and new callback links
+      const oldCallbackLink = foundWebhook.callbackLink;
+      const newCallbackLink = updateWebhookDto.callbackLink || oldCallbackLink;
+
+      // Perform partial update
+      const updatedWebhook = await this.webhookModel.updateOne(
+        { _id: id },
+        {
+          $set: {
+            projectName: updateWebhookDto?.projectName || foundWebhook.projectName,
+            eventName: updateWebhookDto?.eventName || foundWebhook.eventName,
+            userEmail: updateWebhookDto?.user?.userEmail || foundWebhook.userEmail,
+            callbackLink: newCallbackLink,
+            serviceName: updateWebhookDto?.serviceName || foundWebhook.serviceName,
+          },
+        }
+      );
+
+      // Update foundWebhook object with new values
+      foundWebhook.projectName = updateWebhookDto?.projectName;
+      foundWebhook.callbackLink = newCallbackLink;
+
+      // Check if update was successful
+      if (!updatedWebhook) {
+        return {
+          status: 'failed',
+          message: `Unable to update webhook with id ${id}`,
+        };
+      }
+
+      // Return successful response with updated webhook
+      return {
+        status: 'success',
+        message: `Webhook with id ${id} updated successfully`,
+        data: {
+          updatedWebhook: foundWebhook,
+        },
+      };
     } catch (error) {
-        console.error('Error occurred while updating webhook:', error);
+      console.error('Error occurred while updating webhook info:', error);
 
-        throw new HttpException(
-            {
-                statusCode: HttpStatus.INTERNAL_SERVER_ERROR, 
-                status: 'Failure',
-                error: error.message || 'Internal Server Error',
-            },
-            HttpStatus.INTERNAL_SERVER_ERROR, 
-            {
-                cause: error,
-            },
-        );
+      // Handle error and throw an HTTP exception
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.FORBIDDEN,
+          status: 'Failure',
+          error: error.message || 'Internal Server Error',
+        },
+        HttpStatus.FORBIDDEN,
+        {
+          cause: error,
+        },
+      );
     }
-}
+  }
 
-  
-  
+  /**
+   * Removes a webhook by its ID.
+   * @param id The ID of the webhook to remove.
+   * @returns A promise resolving to an object containing the status and message.
+   */
 
 async remove(id: string): Promise<{ status: string; message: string }> {
   try {

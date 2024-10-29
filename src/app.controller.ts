@@ -44,7 +44,7 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap {
 
     const foundTopics = await this.serviceTopic.find({ serviceName: this._microserviceName, topicName: { $in: allTopicNames } })
     // console.log("foundTopics", foundTopics)
-
+ 
     const topicsNotToAddToDB = foundTopics.map((topic) => topic.topicName)
     // console.log("topicsNotToAddToDB", topicsNotToAddToDB)
 

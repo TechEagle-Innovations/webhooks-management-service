@@ -1,4 +1,15 @@
-import { IsNotEmpty, IsString, IsDate } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { ObjectId } from 'mongoose';
+import { RequestDto } from 'src/dto/request.dto';
+import { User } from 'src/dto/user.dto';
+
 
 export class CreateWebhookDto {
   @IsNotEmpty()
@@ -9,7 +20,7 @@ export class CreateWebhookDto {
   @IsString()
   eventName: string;
 
-  user: any
+  // user: any
 
   @IsNotEmpty()
   @IsString()
@@ -18,6 +29,24 @@ export class CreateWebhookDto {
   @IsNotEmpty()
   @IsString()
   serviceName: string;
+
+  @IsNotEmpty()
+  @ValidateNested()  // Ensures the nested DTO is validated
+  @Type(() => User)
+  user: User;
 }
+
+export class CreateWebhookDtoRequest extends RequestDto {
+  @IsNotEmpty()
+  @ValidateNested() // Ensures the nested DTO is validated
+  @Type(() => CreateWebhookDto)
+  body: CreateWebhookDto;
+
+  @IsString()
+  @IsNotEmpty()
+  method: 'POST';
+  static user: any;
+}
+
 
 

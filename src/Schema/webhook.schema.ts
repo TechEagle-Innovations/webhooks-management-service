@@ -15,8 +15,8 @@ export class webhookinfo {
   @Prop({ required: true })
   userEmail: string;
 
-  @Prop({ required: true })
-  userId: string;
+  // @Prop({ required: true })
+  // Id: string;
 
   @Prop({ required: true })
   callbackLink: string;

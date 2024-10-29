@@ -1,61 +1,61 @@
 export const allTopics2 = {
     webhook: [
         {
-            controller:"/webhook",
+            controller: "/webhook",
             topicName: "webhookService-webhook-create",
-            gateWayURL: "webhook/create",
+            gateWayURL: "/webhook",
             urlMethod: "POST"
         },
         {
-            controller:"/webhook",
+            controller: "/webhook",
             topicName: "webhookService-webhook-find",
-            gateWayURL: "webhook/find",
+            gateWayURL: "/webhook/find/:id",
             urlMethod: "GET"
         },
-        
-       {
-            controller:"/webhook",
+
+        {
+            controller: "/webhook",
             topicName: "webhookService-webhook-update",
-            gateWayURL: "webhook/update",
+            gateWayURL: "/webhook/update",
             urlMethod: "PATCH"
         },
 
         {
-            controller:"/webhook",
+            controller: "/webhook",
             topicName: "webhookService-webhook-remove",
-            gateWayURL: "webhook/delete",
+            gateWayURL: "/webhook/delete",
             urlMethod: "DELETE"
         },
     ],
 
     availableService: [
         {
-            controller:"/available-services",
+            controller: "/available-services",
             topicName: "webhookService-availableServices-create",
-            gateWayURL: "availableServices/",
+            gateWayURL: "/available-services",
             urlMethod: "POST"
         },
-       
+
         {
-            controller:"/available-services",
+            controller: "/available-services",
             topicName: "webhookService-availableServices-find",
-            gateWayURL: "availableServices/find",
+            gateWayURL: "/webhook/available-services",
             urlMethod: "GET"
         },
-        
-       {
-            controller:"/available-services",
+
+        {
+            controller: "/available-services",
             topicName: "webhookService-availableServices-update",
-            gateWayURL: "availableServices/update",
+            gateWayURL: "/webhook/available-services",
             urlMethod: "PATCH"
         },
 
         {
-            controller:"/available-services",
+            controller: "/available-services",
             topicName: "webhookService-availableServices-remove",
-            gateWayURL: "availableServices/delete",
+            gateWayURL: "/webhook/available-services",
             urlMethod: "DELETE"
         },
     ]
-    
+
 }

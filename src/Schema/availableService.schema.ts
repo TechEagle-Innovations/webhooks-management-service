@@ -18,6 +18,7 @@ export class availableServicesinfo {
   
     @Prop({ required: true })
     updatedBy: string;
+
 }
 
 
