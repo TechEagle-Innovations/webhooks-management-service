@@ -16,6 +16,8 @@ const serviceFunctionMap = {
   " webhookService-webhook-remove": "remove"
 }
 
+const defaultProtocol= 'rpc'
+
 @Controller('webhook')
 export class WebhookController {
   constructor(private readonly webhookService: WebhookService) { }
@@ -28,45 +30,36 @@ export class WebhookController {
 
     if (serviceFunctionMap[topic] !== undefined)
 
-      return this[serviceFunctionMap[topic]](request)
+      return this[serviceFunctionMap[topic]](request, 'http')
 
     return { status: "failed", message: "invalid request" }
   }
 
   @MessagePattern('webhookService-webhook-create')
-  create(@Payload() request: CreateWebhookDtoRequest) {
+  create(@Payload() request: CreateWebhookDtoRequest, protocol= defaultProtocol) {
 
     console.log("webhook-create", request.body)
-    return this.webhookService.create(request.body);
+    return this.webhookService.create(request.body, protocol);
   }
 
   
   @MessagePattern('webhookService-webhook-find')
- async find(@Payload() request: FindWebhookDtoRequest) {
-    const validationResult = await validateDto(FindWebhookDtoRequest, request);
-    if (validationResult) {
-      return validationResult;
-    }
-   
-    return this.webhookService.find(request)
+ async find(@Payload() request: FindWebhookDtoRequest, protocol= defaultProtocol) {
+    
+    return this.webhookService.find(request, protocol)
 
   }
 
   @MessagePattern('webhookService-webhook-update')
-  update(@Payload() request: OnRequest) {
-    return this.webhookService.update(request.body.id, request.body);
+  update(@Payload() request: OnRequest, protocol= defaultProtocol) {
+    return this.webhookService.update(request.body.id, request.body, protocol);
   }
 
 
   @MessagePattern('webhookService-webhook-remove')
-  async remove(@Payload() request: RemoveWebhookDtoRequest) {
-
-    const validationResult = await validateDto(RemoveWebhookDtoRequest, request);
-    if (validationResult) {
-      return validationResult;
-    }
+  async remove(@Payload() request: RemoveWebhookDtoRequest, protocol= defaultProtocol) {
      const id = request.body.id;
-    return this.webhookService.remove(id);
+    return this.webhookService.remove(id, protocol);
   }
 
 

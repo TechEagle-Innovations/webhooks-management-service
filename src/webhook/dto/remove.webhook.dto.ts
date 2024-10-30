@@ -1,7 +1,7 @@
 import { IsNotEmpty, ValidateNested ,IsString } from "class-validator";
 import { FindWebhookDto } from "./find-webhook.dto"; 
 import { RequestDto } from "src/dto/request.dto";
-import { Type } from "class-transformer";
+import { Expose, Type } from "class-transformer";
 import { User } from "src/dto/user.dto";
 // import { IsString } from "@nestjs/class-validator";
 
@@ -25,5 +25,23 @@ export class RemoveWebhookDto extends FindWebhookDto {
 
     @IsNotEmpty()
     method: "DELETE";
+}
+
+export class RemoveWebhookResponseDto {
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  status: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  message: string;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Expose()
+  @Type(() => RemoveWebhookDto)
+  data: RemoveWebhookDto;
 }
   

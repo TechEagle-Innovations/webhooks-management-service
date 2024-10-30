@@ -7,9 +7,11 @@ import { OnRequest } from 'src/interface/on-request.interface';
 import { availableServicesTopicDocument } from 'src/Schema/availableService.schema';
 import { eventNames } from 'process';
 import { Types } from 'mongoose';
+import { FindAvailableServiceDto } from './dto/find-available-service.dto';
  
 
 export class availableServices {
+  webhookModel: any;
 
   constructor(
     @InjectModel('availableServicesinfo') public AvailableServicesModule: Model<availableServicesTopicDocument>,
@@ -21,7 +23,7 @@ export class availableServices {
    * @param createAvailableServiceDto DTO containing the service details to be created.
    * @returns A promise resolving to an object containing the status, message, and created service data.
    */
-  async create(createAvailableServiceDto: CreateAvailableServiceDto): Promise<{ status: string; message: string; data?: availableServicesTopicDocument }> {
+  async create(createAvailableServiceDto: CreateAvailableServiceDto,  protocol: string): Promise<{ status: string; message: string; data?: availableServicesTopicDocument }> {
     try {
         // Check if a service with the same name and event already exists
 
@@ -91,32 +93,79 @@ export class availableServices {
    * @param id Optional ID of the service to find.
    * @returns A promise resolving to an object containing the status, message, and found services.
    */
-    async find(id?: string) {
+    // async find(id?: string) {
+    //   try {
+    //     let result;
+  
+    //     if (id) {
+    //       // If an ID is provided, find the specific document by ID
+    //       result = await this.AvailableServicesModule.findById(id).exec();
+  
+    //       if (!result) {
+    //         return { status: 'failed', message: `No document found with id: ${id}` };
+    //       }
+    //     } else {
+    //       // If no ID is provided, return all documents
+    //       result = await this.AvailableServicesModule.find().exec();
+    //     }
+  
+    //     return { status: 'success', message: 'Data retrieved successfully', data: result };
+    //   } catch (err) {
+    //     console.error(err);
+    //     throw new HttpException(
+    //       {
+    //         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+    //         status: 'Failure',
+    //         error: err.message || 'An error occurred while fetching data',
+    //       },
+    //       HttpStatus.INTERNAL_SERVER_ERROR,
+    //     );
+    //   }
+    // }
+    async find(payload: any,  protocol: string) {
+      console.log("webhook-create", payload);
+    
+      // Extract necessary information from payload
+      const query = payload.query;
+      const params = payload.params["id"] ? payload.params["id"].split(",") : [];
+    
       try {
-        let result;
-  
-        if (id) {
-          // If an ID is provided, find the specific document by ID
-          result = await this.AvailableServicesModule.findById(id).exec();
-  
-          if (!result) {
-            return { status: 'failed', message: `No document found with id: ${id}` };
-          }
-        } else {
-          // If no ID is provided, return all documents
-          result = await this.AvailableServicesModule.find().exec();
+        // Prepare conditions array for filtering
+        const conditions: any[] = [{}]; // Initialize with an empty object
+    
+        // Add query parameters to conditions if present
+        if (query && Object.keys(query).length) {
+          conditions.push(query); // Push the entire query object
         }
-  
-        return { status: 'success', message: 'Data retrieved successfully', data: result };
+    
+        // Create query parameter object
+        const queryParam = { $and: conditions };
+    
+        // Add _id condition if params are present
+        if (params.length) {
+          queryParam['_id'] = { $in: params }; // Use $in operator for multiple IDs
+        }
+    
+        // Execute find query
+        const findAllwebhook = await this.AvailableServicesModule.find(queryParam).exec();
+    
+        // Check if webhooks were found
+        if (!findAllwebhook.length) {
+          return { status: "failed", message: "Unable to get webhook" };
+        }
+    
+        // Return successful response with found webhooks
+        return { status: "success", message: "All webhook received successfully", data: findAllwebhook };
       } catch (err) {
-        console.error(err);
+        console.log(err);
         throw new HttpException(
           {
-            statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+            statusCode: HttpStatus.FORBIDDEN,
             status: 'Failure',
-            error: err.message || 'An error occurred while fetching data',
+            error: err.response,
           },
-          HttpStatus.INTERNAL_SERVER_ERROR,
+          HttpStatus.FORBIDDEN,
+          { cause: err },
         );
       }
     }
@@ -130,7 +179,7 @@ export class availableServices {
    */
 
 
-  async update(id: string, updateAvailableServiceDto: UpdateAvailableServiceDto): Promise<any> {
+  async update(id: string, updateAvailableServiceDto: UpdateAvailableServiceDto, protocol: string): Promise<any> {
     try {
       // Ensure the ID is a valid ObjectId
       if (!Types.ObjectId.isValid(id)) {
@@ -198,7 +247,7 @@ export class availableServices {
    * @returns A promise resolving to an object containing the status and message.
    */
 
-  async remove(id: string): Promise<{ status: string; message: string }> {
+  async remove(id: string,  protocol: string): Promise<{ status: string; message: string }> {
     try {
       const webhook = await this.AvailableServicesModule .findById(id).exec();
   

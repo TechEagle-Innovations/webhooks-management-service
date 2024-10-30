@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -46,6 +46,24 @@ export class CreateWebhookDtoRequest extends RequestDto {
   @IsNotEmpty()
   method: 'POST';
   static user: any;
+}
+
+export class createWebhookResponseDto {
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  status: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  message: string;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Expose()
+  @Type(() => CreateWebhookDto)
+  data: CreateWebhookDto;
 }
 
 

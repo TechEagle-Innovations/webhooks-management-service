@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -30,10 +30,6 @@ export class CreateAvailableServiceDto {
   @IsString()
   serviceName: string;
 
-  @IsNotEmpty()
-  @ValidateNested()  // Ensures the nested DTO is validated
-  @Type(() => CreateAvailableServiceDto)
-  createAvailableServiceDto: CreateAvailableServiceDto;
 }
 
 export class CreateAvailableServiceDtoRequest extends RequestDto {
@@ -46,7 +42,26 @@ export class CreateAvailableServiceDtoRequest extends RequestDto {
   @IsNotEmpty()
   method: 'POST';
   static user: any;
+
+}export class CreateAvailableServiceResponseDto {
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  status: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  message: string;
+
+ 
+  @ValidateNested()
+  @Expose()
+  @Type(() =>CreateAvailableServiceDto)
+  data: CreateAvailableServiceDto;
 }
+
+
 
 
 

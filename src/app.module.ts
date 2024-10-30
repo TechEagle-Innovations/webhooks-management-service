@@ -8,6 +8,8 @@ import { WebhookModule } from './webhook/webhook.module';
 import { KafkaAdminService } from './app.kafka.service';
 import { SchemasModule } from './Schema/schemas.module';
 import { AvailableServicesModule } from './available-services/available-services.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { RequestResponseValidationInterceptor } from './interceptor/validation.interceptor';
 
 @Module({
   imports: [
@@ -30,7 +32,12 @@ import { AvailableServicesModule } from './available-services/available-services
     AvailableServicesModule
   ],
   controllers: [AppController],
-  providers: [AppService,KafkaAdminService],
+  providers: [AppService,KafkaAdminService,
+    {
+      provide: APP_INTERCEPTOR,
+      useFactory: () => new RequestResponseValidationInterceptor,
+  }
+  ],
 })
 export class AppModule {}
 

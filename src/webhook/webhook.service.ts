@@ -22,7 +22,7 @@ export class WebhookService {
    * @param createWebhookDto DTO containing webhook creation details.
    * @returns A promise resolving to an object containing the status, message, and created webhook data.
    */
-  async create(createWebhookDto: CreateWebhookDto): Promise<{ status: string; message: string; data?: webhookTopicDocument }> {
+  async create(createWebhookDto: CreateWebhookDto, protocol: string): Promise<{ status: string; message: string; data?: webhookTopicDocument}> {
     try {
       // Check if a webhook with the same callback link and user already exists
       const isWebhookAlreadyPresent = await this.isWebhookAlreadyPresent(createWebhookDto);
@@ -92,7 +92,7 @@ export class WebhookService {
    * @param payload Payload containing user, query parameters, and route parameters.
    * @returns A promise resolving to an object containing the status, message, and found webhooks.
    */
-  async find(payload: FindWebhookDtoRequest) {
+   async find(payload: FindWebhookDtoRequest, protocol: string) {
     console.log("webhook-create", payload);
 
     // Extract necessary information from payload
@@ -148,7 +148,7 @@ export class WebhookService {
    * @param updateWebhookDto DTO containing updated webhook details.
    * @returns A promise resolving to an object containing the status, message, and updated webhook data.
    */
-  async update(id: string, updateWebhookDto: UpdateWebhookDto): Promise<any> {
+  async update(id: string, updateWebhookDto: UpdateWebhookDto, protocol: string): Promise<any> {
     console.log(id, updateWebhookDto);
 
     try {
@@ -225,7 +225,7 @@ export class WebhookService {
    * @returns A promise resolving to an object containing the status and message.
    */
 
-async remove(id: string): Promise<{ status: string; message: string }> {
+async remove(id: string, protocol: string): Promise<{ status: string; message: string }> {
   try {
     const webhook = await this.webhookModel.findById(id).exec();
 

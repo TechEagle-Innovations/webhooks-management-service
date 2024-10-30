@@ -1,7 +1,7 @@
 import { IsNotEmpty, ValidateNested, IsString } from "class-validator";
 import { FindAvailableServiceDto } from "./find-available-service.dto"; 
 import { RequestDto } from "src/dto/request.dto";
-import { Type } from "class-transformer";
+import { Expose, Type } from "class-transformer";
 import { User } from "src/dto/user.dto";
 // import { IsString } from "@nestjs/class-validator";
 
@@ -10,10 +10,10 @@ export class RemoveAvailableServiceDto extends FindAvailableServiceDto {
    @IsNotEmpty()
    id: string;
 
-   @IsNotEmpty()
-     @ValidateNested()  // Ensures the nested DTO is validated
-    @Type(() => User)
-    removeAvailableService:RemoveAvailableServiceDto;
+  //  @IsNotEmpty()
+  //    @ValidateNested()  // Ensures the nested DTO is validated
+  //   @Type(() => User)
+  //   removeAvailableService:RemoveAvailableServiceDto;
    
   }
 
@@ -25,5 +25,23 @@ export class RemoveAvailableServiceDto extends FindAvailableServiceDto {
 
     @IsNotEmpty()
     method: "DELETE";
+}
+
+export class RemoveAvailableServiceResponseDto {
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  status: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  message: string;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Expose()
+  @Type(() =>RemoveAvailableServiceDto)
+  data: RemoveAvailableServiceDto;
 }
   

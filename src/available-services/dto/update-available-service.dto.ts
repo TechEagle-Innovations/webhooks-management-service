@@ -1,27 +1,8 @@
-// import { IsString, IsOptional } from 'class-validator';
-
-// export class UpdateAvailableServiceDto {
-//   @IsString()
-//   @IsOptional()
-//   serviceName?: string;
-
-//   @IsString()
-//   @IsOptional()
-//   eventName?: string;
-
-//   @IsString()
-//   @IsOptional()
-//   createdBy?: string;
-
-//   @IsString()
-//   @IsOptional()
-//   updatedBy?: string;
-// }
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateAvailableServiceDto } from './create-available-service.dto'; 
 import { IsNotEmpty, IsString, ValidateNested } from 'class-validator';
 import { RequestDto } from 'src/dto/request.dto';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 
 export class UpdateAvailableServiceDto extends PartialType(CreateAvailableServiceDto) {
     
@@ -30,7 +11,7 @@ export class UpdateAvailableServiceDto extends PartialType(CreateAvailableServic
     id:string
 }
 
-export class UpdateFileDtoRequest extends RequestDto{
+export class UpdateAvailableServiceDtoRequest extends RequestDto{
     @IsNotEmpty()
     @ValidateNested()  // Ensures the nested DTO is validated
     @Type(() => UpdateAvailableServiceDto)
@@ -40,3 +21,20 @@ export class UpdateFileDtoRequest extends RequestDto{
     @IsNotEmpty()
     method: "PATCH";
 }
+export class UpdateAvailableServiceResponseDto {
+    @IsString()
+    @IsNotEmpty()
+    @Expose()
+    status: string;
+  
+    @IsString()
+    @IsNotEmpty()
+    @Expose()
+    message: string;
+  
+    @IsNotEmpty()
+    @ValidateNested()
+    @Expose()
+    @Type(() =>UpdateAvailableServiceDto)
+    data: UpdateAvailableServiceDto;
+  }

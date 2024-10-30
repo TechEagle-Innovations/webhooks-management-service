@@ -1,4 +1,4 @@
-import { Type } from "class-transformer";
+import { Expose, Type } from "class-transformer";
 import { IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
 import { RequestDto } from "src/dto/request.dto";
 import { User } from "src/dto/user.dto";
@@ -25,4 +25,24 @@ export class FindWebhookDtoRequest extends RequestDto{
     @IsNotEmpty()
     method: "GET";
 }
+
+export class FindWebhookResponseDto {
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  status: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Expose()
+  message: string;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Expose()
+  @Type(() => FindWebhookDto)
+  data: FindWebhookDto;
+}
+
+
   
