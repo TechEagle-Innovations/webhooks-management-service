@@ -28,7 +28,7 @@ export class CreateWebhookDto {
 
   @IsNotEmpty()
   @IsString()
-  serviceName: string;
+  serviceName: any;
 
   @IsNotEmpty()
   @ValidateNested()  // Ensures the nested DTO is validated
@@ -45,26 +45,10 @@ export class CreateWebhookDtoRequest extends RequestDto {
   @IsString()
   @IsNotEmpty()
   method: 'POST';
-  static user: any;
+  
 }
 
-export class createWebhookResponseDto {
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  status: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  message: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  @Expose()
-  @Type(() => CreateWebhookDto)
-  data: CreateWebhookDto;
-}
 
 
 

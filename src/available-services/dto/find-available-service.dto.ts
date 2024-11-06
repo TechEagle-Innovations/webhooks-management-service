@@ -20,20 +20,3 @@ export class FindAvailableServiceDtoRequest extends RequestDto{
    method: "GET" ;
 }
 
-export class FindAvailableServiceResponseDto {
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  status: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  message: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  @Expose()
-  @Type(() =>FindAvailableServiceDto)
-  data: FindAvailableServiceDto;
-}

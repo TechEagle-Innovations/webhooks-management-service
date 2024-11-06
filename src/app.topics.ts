@@ -1,12 +1,12 @@
-import { ResponseDto } from "./dto/response.dto"
+import {  CreateAvailableServiceResponseDto, CreateWebhookDtoResponseDto, FindServiceNameResponseDto, FindWebhookResponseDto, ResponseDto } from "./dto/response.dto"
 import { CreateWebhookDtoRequest } from "./webhook/dto/create-webhook.dto"
-import { FindWebhookDtoRequest, FindWebhookResponseDto } from "./webhook/dto/find-webhook.dto"
-import { UpdateWebhookDtoRequest, UpdateWebhookResponseDto } from "./webhook/dto/update-webhook.dto"
+import { UpdateWebhookDtoRequest} from "./webhook/dto/update-webhook.dto"
 import { RemoveWebhookDtoRequest } from "./webhook/dto/remove.webhook.dto"
-import { CreateAvailableServiceDtoRequest, CreateAvailableServiceResponseDto } from "./available-services/dto/create-available-service.dto"
+import { CreateAvailableServiceDtoRequest,  } from "./available-services/dto/create-available-service.dto"
 import { FindAvailableServiceDtoRequest} from "./available-services/dto/find-available-service.dto"
 import { UpdateAvailableServiceDtoRequest } from "./available-services/dto/update-available-service.dto"
 import { RemoveAvailableServiceDtoRequest } from "./available-services/dto/remove.available-service.dto"
+import { FindWebhookDtoRequest } from "./webhook/dto/find-webhook.dto"
 export const allTopics2 = {
     webhook: [
         {
@@ -21,6 +21,15 @@ export const allTopics2 = {
             gateWayURL: "/webhook/find/:id",
             urlMethod: "GET"
         },
+
+        {
+            controller: "/webhook",
+            topicName: "webhookService-webhook-findByServicename",
+            gateWayURL: "/webhook/findByServiceName",
+            urlMethod: "GET"
+        },
+
+
 
         {
             controller: "/webhook",
@@ -70,11 +79,12 @@ export const allTopics2 = {
 }
 
 export const responseDtoMap = {
-    "webhookService-webhook-create": CreateWebhookDtoRequest,
-    "webhookService-webhook-find":FindWebhookResponseDto,
-    "webhookService-webhook-update": UpdateWebhookResponseDto,
-    "webhookService-webhook-remove": RemoveWebhookDtoRequest,
-    'webhookService-availableServices-create': ResponseDto,
+    "webhookService-webhook-create":CreateWebhookDtoResponseDto ,
+    "webhookService-webhook-find": FindWebhookResponseDto,
+    "webhookService-webhook-findByServicename" :FindServiceNameResponseDto,
+    "webhookService-webhook-update": ResponseDto,
+    "webhookService-webhook-remove": ResponseDto,
+    'webhookService-availableServices-create': CreateAvailableServiceResponseDto,
     'webhookService-availableServices-find': ResponseDto,
     'webhookService-availableServices-update': ResponseDto,
     'webhookService-availableServices-remove': ResponseDto,
@@ -82,6 +92,7 @@ export const responseDtoMap = {
 export const requestDtoMap = {
     "webhookService-webhook-create": CreateWebhookDtoRequest,
     "webhookService-webhook-find": FindWebhookDtoRequest,
+   " webhookService-webhook-findByServicename": FindWebhookDtoRequest,
     "webhookService-webhook-update": UpdateWebhookDtoRequest,
     "webhookService-webhook-remove":RemoveWebhookDtoRequest,
     'webhookService-availableServices-create':CreateAvailableServiceDtoRequest,

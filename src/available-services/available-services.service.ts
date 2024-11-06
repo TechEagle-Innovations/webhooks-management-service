@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, BadRequestException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateAvailableServiceDto } from './dto/create-available-service.dto';
@@ -8,6 +8,7 @@ import { availableServicesTopicDocument } from 'src/Schema/availableService.sche
 import { eventNames } from 'process';
 import { Types } from 'mongoose';
 import { FindAvailableServiceDto } from './dto/find-available-service.dto';
+import { throwException } from 'src/utility/throwError';
  
 
 export class availableServices {
@@ -29,7 +30,8 @@ export class availableServices {
 
       const isWebhookAlreadyPresent = await this.isWebhookAlreadyPresent(createAvailableServiceDto);
       if (isWebhookAlreadyPresent) {
-        return { status: 'failed', message: 'Webhook already exists' };
+        //return { status: 'failed', message: 'Webhook already exists' };
+        throw new BadRequestException('event Already Present');
       }
 
         // Prepare service data object
@@ -48,7 +50,8 @@ export class availableServices {
           // Check if service creation was successful
 
       if (!createdWebhook) {
-        return { status: 'failed', message: 'Unable to create webhook' };
+       // return { status: 'failed', message: 'Unable to create webhook' };
+        throw new InternalServerErrorException;
       }
        // Return success response with created service
       return {
@@ -58,17 +61,20 @@ export class availableServices {
       };
     } catch (err) {
       console.error('Error occurred while creating the webhook', err);
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.FORBIDDEN,
-          status: 'Failure',
-          error: err.message || 'Internal Server Error',
-        },
-        HttpStatus.FORBIDDEN,
-        {
-          cause: err,
-        },
-      );
+        const message = err.response.message;
+      const statusCode = err.status;
+       throwException(protocol, statusCode, message);
+    //  throw new HttpException(
+    //     {
+    //       statusCode: HttpStatus.FORBIDDEN,
+    //       status: 'Failure',
+    //       error: err.message || 'Internal Server Error',
+    //     },
+    //     HttpStatus.FORBIDDEN,
+    //     {
+    //       cause: err,
+    //     },
+    //   );
     }
   }
 
@@ -82,8 +88,8 @@ export class availableServices {
 
    
   async isWebhookAlreadyPresent(createAvailableServiceDto: CreateAvailableServiceDto): Promise<boolean> {
-    const { serviceName, eventName } = createAvailableServiceDto;
-    const webhook = await this.AvailableServicesModule.findOne({ serviceName, eventName }).exec();
+    const { eventName } = createAvailableServiceDto;
+    const webhook = await this.AvailableServicesModule.findOne({  eventName }).exec();
     return !!webhook;
   }
   
@@ -151,22 +157,26 @@ export class availableServices {
     
         // Check if webhooks were found
         if (!findAllwebhook.length) {
-          return { status: "failed", message: "Unable to get webhook" };
+          //return { status: "failed", message: "Unable to get webhook" };
+              throw new NotFoundException('Error in getting available services');
         }
     
         // Return successful response with found webhooks
         return { status: "success", message: "All webhook received successfully", data: findAllwebhook };
       } catch (err) {
         console.log(err);
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.FORBIDDEN,
-            status: 'Failure',
-            error: err.response,
-          },
-          HttpStatus.FORBIDDEN,
-          { cause: err },
-        );
+         const message = err.response.message;
+         const statusCode = err.status;
+      throwException(protocol, statusCode, message);
+        // throw new HttpException(
+        //   {
+        //     statusCode: HttpStatus.FORBIDDEN,
+        //     status: 'Failure',
+        //     error: err.response,
+        //   },
+        //   HttpStatus.FORBIDDEN,
+        //   { cause: err },
+        // );
       }
     }
   
@@ -183,14 +193,15 @@ export class availableServices {
     try {
       // Ensure the ID is a valid ObjectId
       if (!Types.ObjectId.isValid(id)) {
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.BAD_REQUEST,
-            status: 'Failure',
-            error: 'Invalid ID format',
-          },
-          HttpStatus.BAD_REQUEST,
-        );
+          throw new InternalServerErrorException;
+        // throw new HttpException(
+        //   {
+        //     statusCode: HttpStatus.BAD_REQUEST,
+        //     status: 'Failure',
+        //     error: 'Invalid ID format',
+        //   },
+        //   HttpStatus.BAD_REQUEST,
+        // );
       }
 
       // Find and update the document by ID, and return the updated document
@@ -224,19 +235,22 @@ export class availableServices {
 
     } catch (error) {
       console.error('Error occurred while updating webhook info:', error);
+            const message = error.response.message;
+      const statusCode = error.status;
+      throwException(protocol, statusCode, message);
 
       // Handle error and throw an HTTP exception
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.FORBIDDEN,
-          status: 'Failure',
-          error: error.message || 'Internal Server Error',
-        },
-        HttpStatus.FORBIDDEN,
-        {
-          cause: error,
-        },
-      );
+      // throw new HttpException(
+      //   {
+      //     statusCode: HttpStatus.FORBIDDEN,
+      //     status: 'Failure',
+      //     error: error.message || 'Internal Server Error',
+      //   },
+      //   HttpStatus.FORBIDDEN,
+      //   {
+      //     cause: error,
+      //   },
+      // );
     }
   }
 
@@ -273,17 +287,20 @@ export class availableServices {
       };
     } catch (error) {
       console.error('Error occurred while deleting webhook:', error);
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.FORBIDDEN,
-          status: 'Failure',
-          error: error.message || 'Internal Server Error',
-        },
-        HttpStatus.FORBIDDEN,
-        {
-          cause: error,
-        },
-      );
+        const message = error.response.message;
+      const statusCode = error.status;
+      throwException(protocol, statusCode, message);
+      // throw new HttpException(
+      //   {
+      //     statusCode: HttpStatus.FORBIDDEN,
+      //     status: 'Failure',
+      //     error: error.message || 'Internal Server Error',
+      //   },
+      //   HttpStatus.FORBIDDEN,
+      //   {
+      //     cause: error,
+      //   },
+      // );
     }
   }
 }

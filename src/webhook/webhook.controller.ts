@@ -13,7 +13,8 @@ const serviceFunctionMap = {
   "webhookService-webhook-create": "create",
   "webhookservice-webhook-find": "find",
   "webhookService-folder-update": "update",
-  " webhookService-webhook-remove": "remove"
+  "webhookService-webhook-remove": "remove",
+  "webhookService-webhook-findByServicename" : "findByServiceName",
 }
 
 const defaultProtocol= 'rpc'
@@ -48,6 +49,17 @@ export class WebhookController {
     
     return this.webhookService.find(request, protocol)
 
+  }
+
+  @MessagePattern('webhookService-webhook-findByServicename')
+  async findbyServiceName(@Payload() request: FindWebhookDtoRequest, protocol = defaultProtocol) {
+    console.log("webhook", request.body)
+    // Access serviceName directly from request
+   const { serviceName} = request.body;
+   const { projectName} = request.body;
+  
+  
+    return this.webhookService.findByServiceName(request,serviceName, protocol);
   }
 
   @MessagePattern('webhookService-webhook-update')

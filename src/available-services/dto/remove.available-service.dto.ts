@@ -27,21 +27,3 @@ export class RemoveAvailableServiceDto extends FindAvailableServiceDto {
     method: "DELETE";
 }
 
-export class RemoveAvailableServiceResponseDto {
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  status: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  message: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  @Expose()
-  @Type(() =>RemoveAvailableServiceDto)
-  data: RemoveAvailableServiceDto;
-}
-  

@@ -21,20 +21,3 @@ export class UpdateAvailableServiceDtoRequest extends RequestDto{
     @IsNotEmpty()
     method: "PATCH";
 }
-export class UpdateAvailableServiceResponseDto {
-    @IsString()
-    @IsNotEmpty()
-    @Expose()
-    status: string;
-  
-    @IsString()
-    @IsNotEmpty()
-    @Expose()
-    message: string;
-  
-    @IsNotEmpty()
-    @ValidateNested()
-    @Expose()
-    @Type(() =>UpdateAvailableServiceDto)
-    data: UpdateAvailableServiceDto;
-  }

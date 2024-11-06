@@ -38,7 +38,7 @@ export class AvailableServicesController {
   create(@Payload() request: CreateAvailableServiceDtoRequest, protocol= defaultProtocol) {
 
     console.log("event-create", request.body)
-    return this.availableServicesService.create(request.body);
+    return this.availableServicesService.create(request.body, protocol);
   }
 
 
@@ -49,7 +49,7 @@ export class AvailableServicesController {
     //   return validationResult;
     // }
    
-    return this.availableServicesService.find(request)
+    return this.availableServicesService.find(request,protocol)
 
   }
   // async find(@Query('id') id?: string) {
@@ -62,12 +62,12 @@ export class AvailableServicesController {
 
   @MessagePattern('webhookService-availableServices-update')
   async updateById(@Param('id') id: string, @Body() updateAvailableServiceDto: UpdateAvailableServiceDto,protocol= defaultProtocol) {
-    return this.availableServicesService.update(id, updateAvailableServiceDto); 
+    return this.availableServicesService.update(id, updateAvailableServiceDto,protocol); 
   }
 
   @MessagePattern('webhookService-availableServices-remove')
   async deleteById(@Param('id') id: string,protocol= defaultProtocol) {
-    return this.availableServicesService.remove(id); 
+    return this.availableServicesService.remove(id,protocol); 
   }
 
 

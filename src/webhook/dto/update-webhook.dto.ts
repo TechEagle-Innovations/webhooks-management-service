@@ -22,20 +22,3 @@ export class UpdateWebhookDtoRequest extends RequestDto{
     method: "PATCH";
 }
 
-export class UpdateWebhookResponseDto {
-    @IsString()
-    @IsNotEmpty()
-    @Expose()
-    status: string;
-  
-    @IsString()
-    @IsNotEmpty()
-    @Expose()
-    message: string;
-  
-    @IsNotEmpty()
-    @ValidateNested()
-    @Expose()
-    @Type(() => UpdateWebhookDto)
-    data: UpdateWebhookDto;
-  }

@@ -27,21 +27,5 @@ export class RemoveWebhookDto extends FindWebhookDto {
     method: "DELETE";
 }
 
-export class RemoveWebhookResponseDto {
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  status: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  message: string;
-
-  @IsNotEmpty()
-  @ValidateNested()
-  @Expose()
-  @Type(() => RemoveWebhookDto)
-  data: RemoveWebhookDto;
-}
   

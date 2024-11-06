@@ -4,16 +4,27 @@ import { RequestDto } from "src/dto/request.dto";
 import { User } from "src/dto/user.dto";
 
 export class FindWebhookDto{
-  @IsString()
+    @IsString()
     @IsOptional()
     id:string;
 
     @IsNotEmpty()
+    @IsOptional()
     @ValidateNested()  // Ensures the nested DTO is validated
     @Type(() => User)
-    user:User;
+    user:User
     
-}
+    @IsOptional()
+    @IsString()
+    serviceName?: string;
+
+    @IsOptional()
+    @IsString()
+    projectName?: string;
+  };
+
+    
+
 
 export class FindWebhookDtoRequest extends RequestDto{
     @IsNotEmpty()
@@ -26,23 +37,8 @@ export class FindWebhookDtoRequest extends RequestDto{
     method: "GET";
 }
 
-export class FindWebhookResponseDto {
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  status: string;
 
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  message: string;
 
-  @IsNotEmpty()
-  @ValidateNested()
-  @Expose()
-  @Type(() => FindWebhookDto)
-  data: FindWebhookDto;
-}
 
 
   

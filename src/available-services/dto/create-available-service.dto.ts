@@ -43,22 +43,6 @@ export class CreateAvailableServiceDtoRequest extends RequestDto {
   method: 'POST';
   static user: any;
 
-}export class CreateAvailableServiceResponseDto {
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  status: string;
-
-  @IsString()
-  @IsNotEmpty()
-  @Expose()
-  message: string;
-
- 
-  @ValidateNested()
-  @Expose()
-  @Type(() =>CreateAvailableServiceDto)
-  data: CreateAvailableServiceDto;
 }
 
 
