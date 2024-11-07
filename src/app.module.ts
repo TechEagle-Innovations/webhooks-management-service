@@ -10,6 +10,7 @@ import { SchemasModule } from './Schema/schemas.module';
 import { AvailableServicesModule } from './available-services/available-services.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestResponseValidationInterceptor } from './interceptor/validation.interceptor';
+import { WebhookInvokeModule } from './webhook-invoke/webhook-invoke.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { RequestResponseValidationInterceptor } from './interceptor/validation.i
     }),
     WebhookModule,
     SchemasModule,
-    AvailableServicesModule
+    AvailableServicesModule,
+    WebhookInvokeModule
   ],
   controllers: [AppController],
   providers: [AppService,KafkaAdminService,

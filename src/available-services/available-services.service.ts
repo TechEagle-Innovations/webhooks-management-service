@@ -99,35 +99,7 @@ export class availableServices {
    * @param id Optional ID of the service to find.
    * @returns A promise resolving to an object containing the status, message, and found services.
    */
-    // async find(id?: string) {
-    //   try {
-    //     let result;
-  
-    //     if (id) {
-    //       // If an ID is provided, find the specific document by ID
-    //       result = await this.AvailableServicesModule.findById(id).exec();
-  
-    //       if (!result) {
-    //         return { status: 'failed', message: `No document found with id: ${id}` };
-    //       }
-    //     } else {
-    //       // If no ID is provided, return all documents
-    //       result = await this.AvailableServicesModule.find().exec();
-    //     }
-  
-    //     return { status: 'success', message: 'Data retrieved successfully', data: result };
-    //   } catch (err) {
-    //     console.error(err);
-    //     throw new HttpException(
-    //       {
-    //         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-    //         status: 'Failure',
-    //         error: err.message || 'An error occurred while fetching data',
-    //       },
-    //       HttpStatus.INTERNAL_SERVER_ERROR,
-    //     );
-    //   }
-    // }
+
     async find(payload: any,  protocol: string) {
       console.log("webhook-create", payload);
     

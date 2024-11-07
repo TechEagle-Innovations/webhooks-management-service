@@ -30,7 +30,7 @@ export async function validateDto<T extends object>(
       status: 400,
       message: 'DTO Validation failed',
       data: constraints,
-      // errors:errors
+      errors:errors
     };
   }
   

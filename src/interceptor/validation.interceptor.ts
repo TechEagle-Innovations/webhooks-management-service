@@ -59,14 +59,15 @@ export class RequestResponseValidationInterceptor implements NestInterceptor {
                     // if (!responseDtoMap) {
                     //     throw new Error('DTO is not defined');
                     // }
-                    if (typeof data !== 'object' || Array.isArray(data)) {
-                        throw new Error('Data is not in the correct format');
-                    }
-                   const resp = JSON.parse(JSON.stringify(data))
+                //     if (typeof data !== 'object' || Array.isArray(data)) {
+                //         throw new Error('Data is not in the correct format');
+                //     }
+                //    const resp = JSON.parse(JSON.stringify(data))
                     // console.log(data.data, 95, responseValidationDto,resp);
 
                     // console.log(data.data, 96, responseValidationDto,resp);
                     if(responseValidationDto){
+                        const resp = JSON.parse(JSON.stringify(data))
                     const transformData: any = plainToInstance(responseValidationDto, resp, { excludeExtraneousValues: true });
                     // console.log("transformData", 98, transformData);
                     const errors: ValidationError[] = await validate(transformData);
