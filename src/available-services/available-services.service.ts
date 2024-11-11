@@ -38,8 +38,9 @@ export class availableServices {
       const webhookData = {
         serviceName: createAvailableServiceDto.serviceName,
         eventName: createAvailableServiceDto.eventName,
-        createdBy: createAvailableServiceDto.createdBy,
-        updatedBy: createAvailableServiceDto.createdBy,
+        createdBy: createAvailableServiceDto.serviceName,
+        updatedBy: createAvailableServiceDto.serviceName,
+        sampleData: createAvailableServiceDto.sampleData
       };
 
          // Create new service document
@@ -183,8 +184,7 @@ export class availableServices {
           $set: {
             serviceName: updateAvailableServiceDto.serviceName,
             eventName: updateAvailableServiceDto.eventName,
-            createdBy: updateAvailableServiceDto.createdBy,
-            updatedBy: updateAvailableServiceDto.updatedBy,
+            updatedBy: updateAvailableServiceDto.serviceName,
           },
         },
         { new: true } // Return the updated document

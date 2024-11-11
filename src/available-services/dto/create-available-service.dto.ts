@@ -12,9 +12,9 @@ import { RequestDto } from 'src/dto/request.dto';
 
 
 export class CreateAvailableServiceDto {
-  @IsNotEmpty()
-  @IsString()
-  createdBy: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // createdBy: string;
 
   @IsNotEmpty()
   @IsString()
@@ -22,13 +22,18 @@ export class CreateAvailableServiceDto {
 
   // user: any
 
-  @IsNotEmpty()
-  @IsString()
-  updatedBy: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // updatedBy: string;
 
   @IsNotEmpty()
   @IsString()
   serviceName: string;
+
+
+  @IsNotEmpty()
+  sampleData: any;
+
 
 }
 

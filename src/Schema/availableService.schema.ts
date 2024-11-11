@@ -19,8 +19,10 @@ export class availableServicesinfo {
     @Prop({ required: true })
     updatedBy: string;
 
-}
+    @Prop({ required: true, type: Object }) 
+    sampleData: any;
 
+}
 
 export const availableServicesTopicsSchema = SchemaFactory.createForClass(availableServicesinfo)
 

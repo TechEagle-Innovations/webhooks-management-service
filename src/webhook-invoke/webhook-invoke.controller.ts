@@ -17,8 +17,19 @@ export class WebhookInvokeController {
     return result;
   }
   @Post('check')
-  check(@Body() body:any){
-     console.log("invoke is running successfully",body);
-     return {status:"success", message:"good", data:body};
+  async check(@Body() payload: any) {
+    // console.log("invoke is running successfully", body);
+    // const { url, data } = body; // Extracting `url` and `data` from the body
+    const result = {status:'success', message:"dummy webhook check success"}
+    return result;
   }
+
+  @Post('test')
+  async test(@Body() payload: any) {
+    // console.log("invoke is running successfully", body);
+    // const { url, data } = body; // Extracting `url` and `data` from the body
+    const result = await this.webhookInvokeService.check(payload);
+    return result;
+  }
+
 }

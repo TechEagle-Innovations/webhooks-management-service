@@ -88,13 +88,13 @@ export class WebhookService {
    * @returns A promise resolving to a boolean indicating whether the webhook already exists.
    */
   async isWebhookAlreadyPresent(createWebhookDto: CreateWebhookDto): Promise<boolean> {
-    const { callbackLink, serviceName, user, eventName } = createWebhookDto;
+    const { user, eventName } = createWebhookDto;
   
     // Check if a webhook with the same callbackLink, userEmail, and serviceName exists
     const webhook = await this.webhookModel.findOne({
-      callbackLink,
+      //callbackLink,
       userEmail: user.userEmail,
-      serviceName,
+      //serviceName,
       eventName,
     }).exec();
   

@@ -50,6 +50,10 @@ export class CreateWebhookData {
   @IsNotEmpty()
   updatedAt: string;
 
+  // @Expose()
+  // @IsNotEmpty()
+  // sampleData: any;
+
   @Expose()
   @IsNumber()
   __v: number;
@@ -137,6 +141,11 @@ export class CreateAvailableResponseData {
   @IsString()
   @IsNotEmpty()
   updatedBy: string;
+
+
+  @Expose()
+  @IsNotEmpty()
+  sampleData: any;
 
   @Expose()
   @IsNumber()
