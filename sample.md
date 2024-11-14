@@ -103,7 +103,7 @@ flowchart TD
 
     K --> L{Were Webhooks Found?}
     L -->|Yes| M[Return Success Response with Found Webhooks]
-    L -->|No| N[Throw NotFoundException Error in getting available services]
+    L -->|No| N[Throw Error in getting available services]
 ```
 
 ```mermaid
@@ -113,10 +113,10 @@ flowchart TD
     B -->|Invalid| Z[Throw Validation Error]
 
     C -->|Match| D{Is Service Name Provided?}
-    C -->|No Match| Y[Throw UnauthorizedException Project name is required]
+    C -->|No Match| Y[Throw error Project name is required]
 
     D -->|Yes| E[Query Webhooks by Service Name]
-    D -->|No| X[Throw NotFoundException Service name is required to find webhooks]
+    D -->|No| X[Throw error Service name is required to find webhooks]
 
     E --> F{Are Webhooks Found?}
     F -->|Yes| G[Return Success with Event Names]
@@ -140,4 +140,50 @@ flowchart TD
     J --> K{Is update successful?}
     K -->|No| L[Return Unable to update webhook response]
     K -->|Yes| M[Update foundWebhook object with new values]
+```
+
+```mermaid
+flowchart TD
+    A[webhook remove] --> B[Validate Input with DTO]
+    B -->|Valid| C[Find Webhook by ID in Database]
+    B -->|Invalid| E[Return Validation Error]
+    C --> D{Webhook Found?}
+    D -->|No| F[Return: status 'failed']
+    D -->|Yes| G[Attempt to Delete Webhook]
+    G --> H{Delete Successful?}
+    H -->|Yes| I[Return: status 'success']
+    H -->|No| J[Return: status 'failed']
+```
+
+```mermaid
+flowchart TD
+ 
+    B[webhook-invoke] --> C[Extract details]
+    C --> D[Find Webhooks Matching eventName, projectName, userEmail in Database]
+
+    D -->|Matches Found| E[Extract callbackLink URLs from Webhooks]
+    D -->|No Matches| G[Return Empty URLs Array]
+
+    E --> F[Map URLs to sendData Requests with Payload Data]
+    F --> H[Execute All sendData Requests with Promise.allSettled]
+    H --> I[Map Results to Extract Status and Data]
+    I --> J[Return:status success, data]
+    
+    H -->|Error| K[Catch Error]
+    K --> L[Error occurred while creating the webhook ]
+```
+
+```mermaid
+flowchart TD
+    B[webhook-invoke-check]  --> C[Extract eventName, projectName, userEmail, and id from Payload]
+    C --> D[Query AvailableServicesModule for Matching Service]
+    D --> F[Query webhookModel for Matching Webhooks by id, eventName, projectName, and userEmail]
+    F --> H{Webhook Found?}
+    H -->|Yes| I[Extract Callback URLs from Webhook Results]
+    H -->|No| J[Return Empty URLs Array]
+    I --> K[Map URLs to sendData ]
+    K --> L[Execute All sendData Requests with Promise.allSettled]
+    L --> M[Map Results to Extract Status and Data]
+    M --> N[Return: status success, data ]
+    L -->|Error| O[Catch Error]
 ```

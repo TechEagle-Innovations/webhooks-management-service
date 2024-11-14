@@ -9,6 +9,7 @@ import { OnRequest } from 'src/interface/on-request.interface';
 import { FindWebhookDto, FindWebhookDtoRequest } from './dto/find-webhook.dto';
 import { throwException } from 'src/utility/throwError';
 import { availableServicesTopicDocument, availableServicesTopicsSchema } from 'src/Schema/availableService.schema';
+import { queryFilter } from 'src/utility/query-check';
 
 /**
  * Service for managing webhooks.
@@ -115,7 +116,8 @@ export class WebhookService {
 
     // Extract necessary information from payload
     const user = payload.body.user;
-    const query = payload.query;
+    // const query = payload.query;
+    const query = queryFilter(payload.query);
     const params = payload.params["id"] ? payload.params["id"].split(",") : [];
 
     try {

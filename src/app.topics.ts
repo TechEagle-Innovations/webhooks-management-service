@@ -1,4 +1,4 @@
-import {  CreateAvailableServiceResponseDto, CreateWebhookDtoResponseDto, FindServiceNameResponseDto, FindWebhookResponseDto, ResponseDto } from "./dto/response.dto"
+import {  CreateAvailableServiceResponseDto, CreateWebhookDtoResponseDto, FindAvailableServiceResponseDto, FindServiceNameResponseDto, FindWebhookResponseDto, ResponseDto } from "./dto/response.dto"
 import { CreateWebhookDtoRequest } from "./webhook/dto/create-webhook.dto"
 import { UpdateWebhookDtoRequest} from "./webhook/dto/update-webhook.dto"
 import { RemoveWebhookDtoRequest } from "./webhook/dto/remove.webhook.dto"
@@ -74,9 +74,40 @@ export const allTopics2 = {
             gateWayURL: "/available-services",
             urlMethod: "DELETE"
         },
+    ],
+
+    webhookInvoke : [
+        {
+            controller: "/webhook-invoke",
+            topicName: "webhookService-invoke-function",
+            gateWayURL: "/webhook-invoke",
+            urlMethod: "POST" 
+        },
+
+        {
+            controller: "/webhook-invoke",
+            topicName: "webhookService-invoke-check",
+            gateWayURL: "/webhook-invoke",
+            urlMethod: "POST" 
+        },
+
+        {
+            controller: "/webhook-invoke",
+            topicName: "webhookService-invoke-test",
+            gateWayURL: "/webhook-invoke",
+            urlMethod: "POST" 
+        },
+
+
+
     ]
 
 }
+
+
+
+
+
 
 export const responseDtoMap = {
     "webhookService-webhook-create":CreateWebhookDtoResponseDto ,
@@ -85,7 +116,7 @@ export const responseDtoMap = {
     "webhookService-webhook-update": ResponseDto,
     "webhookService-webhook-remove": ResponseDto,
     'webhookService-availableServices-create': CreateAvailableServiceResponseDto,
-    'webhookService-availableServices-find': ResponseDto,
+    'webhookService-availableServices-find': FindAvailableServiceResponseDto ,
     'webhookService-availableServices-update': ResponseDto,
     'webhookService-availableServices-remove': ResponseDto,
 }

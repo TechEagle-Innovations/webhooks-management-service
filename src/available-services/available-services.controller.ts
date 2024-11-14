@@ -1,12 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete , Request, Query, HttpException, HttpStatus} from '@nestjs/common';
 import { availableServices } from './available-services.service';
 import { CreateAvailableServiceDto, CreateAvailableServiceDtoRequest } from './dto/create-available-service.dto';
-import { UpdateAvailableServiceDto } from './dto/update-available-service.dto';
+import { UpdateAvailableServiceDto, UpdateAvailableServiceDtoRequest } from './dto/update-available-service.dto';
 import { Response } from 'express';
 import { OnRequest } from 'src/interface/on-request.interface'; 
 import { ClientKafka, MessagePattern, Payload } from '@nestjs/microservices';
 import { FindAvailableServiceDto, FindAvailableServiceDtoRequest } from './dto/find-available-service.dto';
 import { validateDto } from 'src/utility/validate-dto';
+import { RemoveAvailableServiceDto, RemoveAvailableServiceDtoRequest } from './dto/remove.available-service.dto';
 
 const serviceFunctionMap = {
   "webhookService-availableServices-create": "create",
@@ -44,31 +45,24 @@ export class AvailableServicesController {
 
   @MessagePattern('webhookService-availableServices-find')
   async find(@Payload() request: FindAvailableServiceDtoRequest,protocol= defaultProtocol) {
-    // const validationResult = await validateDto(FindAvailableServiceDtoRequest, request);
-    // if (validationResult) {
-    //   return validationResult;
-    // }
-   
+  
     return this.availableServicesService.find(request,protocol)
 
   }
-  // async find(@Query('id') id?: string) {
-  //   return this.availableServicesService.find(id);
-  // }
-  // async find(@Query() request: FindAvailableServiceDtoRequest) {
-  //   return this.availableServicesService.find(id);
-  // }
+  
 
 
   @MessagePattern('webhookService-availableServices-update')
-  async updateById(@Param('id') id: string, @Body() updateAvailableServiceDto: UpdateAvailableServiceDto,protocol= defaultProtocol) {
-    return this.availableServicesService.update(id, updateAvailableServiceDto,protocol); 
+  async update(@Payload() request: UpdateAvailableServiceDtoRequest, protocol= defaultProtocol) {
+    console.log("CONTROLLER body", request);
+    return this.availableServicesService.update(request.params.id,request.body,protocol); 
   }
 
   @MessagePattern('webhookService-availableServices-remove')
-  async deleteById(@Param('id') id: string,protocol= defaultProtocol) {
-    return this.availableServicesService.remove(id,protocol); 
-  }
+  async remove(@Payload() request: RemoveAvailableServiceDtoRequest, protocol= defaultProtocol) {
+    const id = request.body.id;
+   return this.availableServicesService.remove(id, protocol);
+ }
 
 
 }

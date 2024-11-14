@@ -190,3 +190,17 @@ export class FindServiceNameResponseDto {
   data: string[];
 }
 
+export class FindAvailableServiceResponseDto {
+  @Expose()
+  @IsString()
+  status: string;
+
+  @Expose()
+  @IsString()
+  message: string;
+
+  @Expose()
+  @ValidateNested()
+  @Type(() => CreateAvailableResponseData)
+  data: CreateAvailableResponseData[] ;
+}

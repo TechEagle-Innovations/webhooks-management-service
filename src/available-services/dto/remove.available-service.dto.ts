@@ -9,6 +9,7 @@ export class RemoveAvailableServiceDto extends FindAvailableServiceDto {
    @IsString()
    @IsNotEmpty()
    id: string;
+ // body: any;
 
   //  @IsNotEmpty()
   //    @ValidateNested()  // Ensures the nested DTO is validated

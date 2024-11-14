@@ -1,13 +1,25 @@
 import { Optional } from "@nestjs/common";
 import { Expose, Type } from "class-transformer";
-import { IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
+import { isNotEmpty, IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
 import { RequestDto } from "src/dto/request.dto";
 // import { User } from "src/dto/user.dto";
 
 export class FindAvailableServiceDto{
-  // @IsString()
-  @Optional()
-   id:string;
+  @IsString()
+  @IsOptional()
+  id:string;
+
+  @IsString()
+  @IsOptional()
+  serviceName:string;
+
+  @IsString()
+  @IsOptional()
+  eventName:string;
+
+  @IsString()
+  @IsOptional()
+  sampleData:string;
     
 }
 

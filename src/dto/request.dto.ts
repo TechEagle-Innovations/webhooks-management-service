@@ -27,7 +27,7 @@ export class RequestDto {
   method: "GET" | "PATCH" | "POST" | "DELETE";
 
   @IsObject()
-  params: Record<string, string> | {};
+  params: Record<string, string> | {"id": string };
 
   @IsObject()
   query: Record<string, string> | {};
