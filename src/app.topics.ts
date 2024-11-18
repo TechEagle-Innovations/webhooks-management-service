@@ -100,7 +100,18 @@ export const allTopics2 = {
 
 
 
-    ]
+    ],
+
+    webhookServiceEvent :[
+        {
+            controller: "/",
+            topicName: "webhook-service-event",
+            gateWayURL: "/active-service-event",
+            urlMethod: "POST"
+        },
+
+    ],
+
 
 }
 

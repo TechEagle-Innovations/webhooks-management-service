@@ -1,4 +1,5 @@
 import { Body, Controller, Get, OnApplicationBootstrap, OnModuleInit, Post } from '@nestjs/common';
+import {  Patch, Param, Delete, Request, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -14,6 +15,13 @@ import { availableServices } from './available-services/available-services.servi
 import { Router } from './utility/router';
 //import { availableServicesService } from '../src/available-services/available-services.service';
 const config = new ConfigService();
+import { MessagePattern } from '@nestjs/microservices';
+
+const serviceFunctionMap = {
+"webhook-service-event": "supplyEvents"
+}
+
+
 
 const allServiceNames = [
   "INVENTORY_MANAGEMENT_SERVICE",
@@ -48,6 +56,20 @@ const getAllConfigData = () => {
 @Controller()
 
 export class AppController implements OnModuleInit, OnApplicationBootstrap {
+
+  @Post()
+  handleHttpReq(@Request() req: any, resp: Response) {
+    console.log("req.body=", req.body)
+    const request = req.body;
+    const { topic, body, headers, method, param, query } = request;
+
+    if (serviceFunctionMap[topic] !== undefined)
+
+      return this[serviceFunctionMap[topic]](request, 'http')
+
+    return { status: "failed", message: "invalid request" }
+  }
+
   private serviceRouter = {}
 
   private _microserviceName = "webhook-management"
@@ -91,14 +113,10 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap {
         );
         // console.log(serviceName,"getTopicsResp", getTopicsResp.data.data)
         const allTopics = getTopicsResp.data.data.topics;
+        
         const {serviceName, events } = allTopics;
-        // const data = {
-        //   serviceName: "",
-        //   events: []
-        // };
-      
-      
         return this.availableServices.supplyEvent(allTopics, this.defaultProtocol);
+        
     
       });
     } catch (error) {
@@ -146,7 +164,8 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap {
     return { status: "success", message: "topics served by microservice fetched successfully", data: { topics: this.topics } }
   }
 
-  @Post('active-service-event')
+  //@Post('active-service-event')
+  @MessagePattern('webhook-service-event')
   async supplyEvents(@Payload() data: any) {
     try {
       const { serviceName, events } = data;
