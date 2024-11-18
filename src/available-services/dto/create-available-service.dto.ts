@@ -30,7 +30,7 @@ export class CreateAvailableServiceDto {
   @IsString()
   serviceName: string;
 
-
+  @IsOptional()
   @IsNotEmpty()
   sampleData: any;
 

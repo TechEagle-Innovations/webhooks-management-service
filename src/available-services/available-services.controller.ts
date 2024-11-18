@@ -64,5 +64,27 @@ export class AvailableServicesController {
    return this.availableServicesService.remove(id, protocol);
  }
 
+//  @Post('again')
+//  async supplyEvents(@Payload() data:any, protocol=defaultProtocol){
+//   const { serviceName, events } = data;
+//   return this.availableServicesService.supplyEvent(data, protocol)
 
+
+  
+  //  try {
+  //   console.log("data", data);
+  //    const {serviceName, events}=data;
+  //    const promises=events.map((eventName)=> this.availableServicesService.create({serviceName, eventName, sampleData:"sampleData"},protocol))
+  //    const result:any = await Promise.allSettled(promises);
+  //    const rdata = result.map((fresult) => ({ status: fresult.status, fdata: fresult.value.data }));
+  //    return {
+  //      message: 'Webhook invoked successfully',
+  //      status: "success", data: rdata
+  //    };
+  
+  //  } catch (error) {
+  //    console.error('Error occurred ', error);
+     
+//  //  }
+ //}
 }

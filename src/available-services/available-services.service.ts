@@ -25,7 +25,7 @@ export class availableServices {
     * @param createAvailableServiceDto DTO containing the service details to be created.
     * @returns A promise resolving to an object containing the status, message, and created service data.
     */
-  async create(createAvailableServiceDto: CreateAvailableServiceDto, protocol: string): Promise<{ status: string; message: string; data?: availableServicesTopicDocument }> {
+  async create(createAvailableServiceDto: any, protocol: string): Promise<{ status: string; message: string; data?: availableServicesTopicDocument }> {
     try {
       // Check if a service with the same name and event already exists
 
@@ -240,17 +240,35 @@ export class availableServices {
       const message = error.response.message;
       const statusCode = error.status;
       throwException(protocol, statusCode, message);
-      // throw new HttpException(
-      //   {
-      //     statusCode: HttpStatus.FORBIDDEN,
-      //     status: 'Failure',
-      //     error: error.message || 'Internal Server Error',
-      //   },
-      //   HttpStatus.FORBIDDEN,
-      //   {
-      //     cause: error,
-      //   },
-      // );
+
+    }
+  }
+  async supplyEvent(data: any, protocol: string) {
+    try {
+      console.log("data", data);
+      const { serviceName, events } = data;
+      // this.create({ serviceName, eventName.name, eventName.sampleData}, protocol)
+    
+      const promises = events.map((eventName) => 
+        {const eventData = {
+        serviceName:serviceName,
+        eventName: eventName.name,
+        sampleData: eventName.sampleData
+        }
+        return this.create(eventData, protocol)} )
+        console.log("promises", promises)
+      const result: any = await Promise.allSettled(promises);
+      console.log("result", result)
+      const rdata = result.map((fresult) => ({ status: fresult.status, fdata: fresult.value.data }));
+      return {
+        message: 'events successfully create',
+        status: "success", data: rdata
+      };
+      // return data
+
+    } catch (error) {
+      console.error('Error occurred ', error);
+
     }
   }
 }

@@ -105,10 +105,6 @@ export const allTopics2 = {
 }
 
 
-
-
-
-
 export const responseDtoMap = {
     "webhookService-webhook-create":CreateWebhookDtoResponseDto ,
     "webhookService-webhook-find": FindWebhookResponseDto,

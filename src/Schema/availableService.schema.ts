@@ -14,13 +14,13 @@ export class availableServicesinfo {
     eventName: string;
   
     @Prop({ required: true })
-    createdBy: string;
+    createdBy?: string;
   
     @Prop({ required: true })
-    updatedBy: string;
+    updatedBy?: string;
 
     @Prop({ required: true, type: Object }) 
-    sampleData: any;
+    sampleData?: any;
 
 }
 

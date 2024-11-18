@@ -11,6 +11,7 @@ import { AvailableServicesModule } from './available-services/available-services
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestResponseValidationInterceptor } from './interceptor/validation.interceptor';
 import { WebhookInvokeModule } from './webhook-invoke/webhook-invoke.module';
+import { availableServices } from './available-services/available-services.service';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { WebhookInvokeModule } from './webhook-invoke/webhook-invoke.module';
     WebhookInvokeModule
   ],
   controllers: [AppController],
-  providers: [AppService,KafkaAdminService,
+  providers: [AppService,KafkaAdminService, availableServices,
     {
       provide: APP_INTERCEPTOR,
       useFactory: () => new RequestResponseValidationInterceptor,
