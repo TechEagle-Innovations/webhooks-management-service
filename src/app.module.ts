@@ -12,6 +12,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestResponseValidationInterceptor } from './interceptor/validation.interceptor';
 import { WebhookInvokeModule } from './webhook-invoke/webhook-invoke.module';
 import { availableServices } from './available-services/available-services.service';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { SharedResourceModule } from './shared-resource/shared-resource.module';
 
 @Module({
   imports: [
@@ -29,10 +31,11 @@ import { availableServices } from './available-services/available-services.servi
       inject: [ConfigService],
       
     }),
+    SharedResourceModule,
     WebhookModule,
     SchemasModule,
     AvailableServicesModule,
-    WebhookInvokeModule
+    WebhookInvokeModule,
   ],
   controllers: [AppController],
   providers: [AppService,KafkaAdminService, availableServices,
@@ -41,6 +44,7 @@ import { availableServices } from './available-services/available-services.servi
       useFactory: () => new RequestResponseValidationInterceptor,
   }
   ],
+  exports:[]
 })
 export class AppModule {}
 

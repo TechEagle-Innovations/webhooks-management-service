@@ -1,5 +1,5 @@
-import { Body, Controller, Get, OnApplicationBootstrap, OnModuleInit, Post } from '@nestjs/common';
-import {  Patch, Param, Delete, Request, HttpException, HttpStatus, Query } from '@nestjs/common';
+import { BeforeApplicationShutdown, Body, Controller, Get, Inject, OnApplicationBootstrap, OnModuleInit, Post } from '@nestjs/common';
+import { Patch, Param, Delete, Request, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -10,23 +10,22 @@ import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { ServiceTopicDocument } from './Schema/ServiceTopicsSchema';
 import { error } from 'console';
-import { Payload } from '@nestjs/microservices';
+import { ClientKafka, Payload } from '@nestjs/microservices';
 import { availableServices } from './available-services/available-services.service';
 import { Router } from './utility/router';
 //import { availableServicesService } from '../src/available-services/available-services.service';
 const config = new ConfigService();
 import { MessagePattern } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 const serviceFunctionMap = {
-"webhook-service-event": "supplyEvents"
+  "webhook-service-event": "supplyEvents"
 }
-
-
 
 const allServiceNames = [
   "INVENTORY_MANAGEMENT_SERVICE",
   "ORDER_MANAGEMENT_SERVICE",
-  //"USER_MANAGEMENT_SERVICE ",
+  "USER_MANAGEMENT_SERVICE ",
   "ADMIN_MANAGEMENT_SERVICE ",
   "LOCATION_MANAGEMENT_SERVICE",
   "FLEET_MANAGEMENT_SERVICE ",
@@ -45,17 +44,17 @@ const allServiceDetails = {}
 
 const getAllConfigData = () => {
   allServiceNames.forEach(service => {
-    console.log("allServiceNames.forEach",service)
+    console.log("allServiceNames.forEach", service)
     const link = config.get(service);
     // const controller = config.get(service + "_CONTROLLER");
     allServiceDetails[service] = { link }
     // console.log(config.get(service),"{ port, link, controller }",{ port, link, controller }, port, link, controller )
   });
-  console.log("allServiceDetails",allServiceDetails)
+  console.log("allServiceDetails", allServiceDetails)
 }
 @Controller()
 
-export class AppController implements OnModuleInit, OnApplicationBootstrap {
+export class AppController implements OnModuleInit, OnApplicationBootstrap, BeforeApplicationShutdown {
 
   @Post()
   handleHttpReq(@Request() req: any, resp: Response) {
@@ -79,7 +78,11 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap {
   private topicsToAdd = {}
   private topics = []
   availableServicesService: any;
-  constructor(private readonly appService: AppService, private readonly kafkaAdminService: KafkaAdminService, @InjectModel("serviceTopicInfo") public serviceTopic: Model<ServiceTopicDocument>, public readonly availableServices: availableServices) {
+  constructor(private readonly appService: AppService,
+    private readonly kafkaAdminService: KafkaAdminService,
+    @InjectModel("serviceTopicInfo") public serviceTopic: Model<ServiceTopicDocument>,
+    public readonly availableServices: availableServices,
+    @Inject("KAFKA_CLIENT") private client: ClientKafka) {
     getAllConfigData()
 
     const topicControllers = Object.keys(allTopics2); //get all keys froms controllers
@@ -97,32 +100,41 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap {
   public defaultProtocol = 'rpc'
   async onApplicationBootstrap() {
     console.log("onApplicationBootstrap");
-
-
+    await this.broadcast(1);
   }
+
+  async beforeApplicationShutdown() {
+    console.log("beforeApplicationShutdown");
+    await this.broadcast(2);
+  }
+  private webhookTopicsTosubscribe = ["service-activity"]
   async onModuleInit() {
-    try {
-      console.log("allServiceNames=", allServiceNames)
-      const allServicePromisses = await allServiceNames.map(async (serviceItem) => {
-        console.log(" allServiceDetails[serviceItem]=",  allServiceDetails[serviceItem])
-       const SERVICE_LINK = allServiceDetails[serviceItem].link // get specific service link
-        const router = new Router()
-        this.serviceRouter[serviceItem] = router
-        const getTopicsResp = await axios(
-          `${SERVICE_LINK}/get-active-event`,
-        );
-        // console.log(serviceName,"getTopicsResp", getTopicsResp.data.data)
-        const allTopics = getTopicsResp.data.data.topics;
-        
-        const {serviceName, events } = allTopics;
-        return this.availableServices.supplyEvent(allTopics, this.defaultProtocol);
-        
-    
-      });
-    } catch (error) {
-      console.trace(error);
-    }
-  
+    this.webhookTopicsTosubscribe.forEach(topic => {
+      this.client.subscribeToResponseOf(topic)
+    })
+    await this.client.connect();
+    // try {
+    //   console.log("allServiceNames=", allServiceNames)
+    //   const allServicePromisses = await allServiceNames.map(async (serviceItem) => {
+    //     console.log(" allServiceDetails[serviceItem]=",  allServiceDetails[serviceItem])
+    //    const SERVICE_LINK = allServiceDetails[serviceItem].link // get specific service link
+    //     const router = new Router()
+    //     this.serviceRouter[serviceItem] = router
+    //     const getTopicsResp = await axios(
+    //       `${SERVICE_LINK}/get-active-event`,
+    //     );
+    //     // console.log(serviceName,"getTopicsResp", getTopicsResp.data.data)
+    //     const allTopics = getTopicsResp.data.data.topics;
+
+    //     const {serviceName, events } = allTopics;
+    //     return this.availableServices.supplyEvent(allTopics, this.defaultProtocol);
+
+
+    //   });
+    // } catch (error) {
+    //   console.trace(error);
+    // }
+
 
 
     console.log("onModuleInit");
@@ -165,7 +177,7 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap {
   }
 
   //@Post('active-service-event')
-  @MessagePattern('webhook-service-event')
+  @MessagePattern('webhookService-app-registerEvents')
   async supplyEvents(@Payload() data: any) {
     try {
       const { serviceName, events } = data;
@@ -177,4 +189,28 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap {
     }
 
   }
+
+  async broadcast(status) {
+    console.log("message Broadcast");
+    const topic = "service-activity"
+    const payload = {
+      topic: "service-activity",
+      body: {
+        ServiceName: "WEBHOOK_MANAGEMENT_SERVICE",
+        status: status
+      },
+      headers: {},
+      method: "POST",
+      params: {},
+      query: {}
+    }
+    const kafkaResp = this.client.send(topic, { key: "payload.body.user.userEmail", value: payload });
+    return true
+  }
+
+  @MessagePattern("service-activity")
+  helloWebhook(@Payload() payload: any) {
+    console.log(payload);
+  }
+
 }
