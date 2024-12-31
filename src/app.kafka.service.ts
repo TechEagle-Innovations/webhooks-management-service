@@ -11,7 +11,7 @@ export class KafkaAdminService implements OnModuleInit {
     kafkaBorkers = this.config.get("ALL_KAFKA_BROKERS").split(',')
     private admin: Admin
     private readonly kafka = new Kafka({
-        clientId: 'nestjs-microservice',
+        clientId: 'webhook-admin-microservice',
         brokers: [...this.kafkaBorkers], // Replace with your Kafka brokers
     });
 

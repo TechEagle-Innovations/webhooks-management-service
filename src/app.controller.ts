@@ -10,7 +10,7 @@ import axios from 'axios';
 import { ConfigService } from '@nestjs/config';
 import { ServiceTopicDocument } from './Schema/ServiceTopicsSchema';
 import { error } from 'console';
-import { ClientKafka, Payload } from '@nestjs/microservices';
+import { ClientKafka, EventPattern, Payload } from '@nestjs/microservices';
 import { availableServices } from './available-services/available-services.service';
 import { Router } from './utility/router';
 //import { availableServicesService } from '../src/available-services/available-services.service';
@@ -100,12 +100,12 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap, Befo
   public defaultProtocol = 'rpc'
   async onApplicationBootstrap() {
     console.log("onApplicationBootstrap");
-    await this.broadcast(1);
+   this.broadcast(1);
   }
 
   async beforeApplicationShutdown() {
     console.log("beforeApplicationShutdown");
-    await this.broadcast(2);
+   this.broadcast(2);
   }
   private webhookTopicsTosubscribe = ["service-activity"]
   async onModuleInit() {
@@ -182,12 +182,9 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap, Befo
     try {
       const { serviceName, events } = data;
       return this.availableServices.supplyEvent(data, this.defaultProtocol)
-
     } catch (error) {
       console.error('Error occurred ', error);
-
     }
-
   }
 
   async broadcast(status) {
@@ -205,11 +202,18 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap, Befo
       query: {}
     }
     const kafkaResp = this.client.send(topic, { key: "payload.body.user.userEmail", value: payload });
+    const fistrresp= await firstValueFrom(kafkaResp);
+    console.log("kafkaResp", fistrresp)
     return true
   }
 
   @MessagePattern("service-activity")
   helloWebhook(@Payload() payload: any) {
+    if(payload.body.status===1){
+      console.log(`${payload.body.ServiceName} started successfully`);
+    }else{
+      console.log(`${payload.body.ServiceName} closed successfully`);
+    }
     console.log(payload);
   }
 

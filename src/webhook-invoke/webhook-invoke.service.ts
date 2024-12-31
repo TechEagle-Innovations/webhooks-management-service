@@ -27,10 +27,11 @@ export class WebhookInvokeService {
       console.log("webhook-invoke", payload);
 
       // Extract relevant information from the payload
-      const { eventName, projectName, userEmail, data } = payload;
+      const { eventName, projectName, userEmail, data } = payload.body;
       // Find webhooks matching the criteria
-      const res = await this.webhookModel.find({ $and: [{ eventName: payload.eventName }, { projectName: payload.projectName }, { userEmail: payload.userEmail }] })
+      const res = await this.webhookModel.find({ $and: [{ eventName: eventName }, { projectName: projectName }, { userEmail: userEmail }] })
        // Extract callback URLs from the found webhooks
+       
       const urls = res.map((webhook) => webhook.callbackLink);
       console.log(urls);
 

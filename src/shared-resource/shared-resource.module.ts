@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Partitioners } from 'kafkajs';
 
 @Global()
 @Module({
@@ -14,7 +15,10 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
             },
             consumer: {
               groupId: 'consumergroup-webhook-management'
-            }
+            },
+            producer: {
+              createPartitioner: Partitioners.LegacyPartitioner,
+            },
           }
         },
       ])],

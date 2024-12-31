@@ -39,7 +39,8 @@ export class AvailableServicesController {
   create(@Payload() request: CreateAvailableServiceDtoRequest, protocol= defaultProtocol) {
 
     console.log("event-create", request.body)
-    return this.availableServicesService.create(request.body, protocol);
+    return "Working all good";
+    // return this.availableServicesService.create(request.body, protocol);
   }
 
 

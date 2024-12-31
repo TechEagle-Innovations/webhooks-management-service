@@ -32,10 +32,10 @@ export class RequestResponseValidationInterceptor implements NestInterceptor {
                 defaultProtocol = "http"
         }
 
-        console.log("requestDto", requestValidationDto, "request.body", request.body)
+        // console.log("requestDto", requestValidationDto, "request.body", request.body)
 
         const transformedData: any = plainToInstance(requestValidationDto, topicFromKafka ? request : request.body);
-        console.log("transformedData", transformedData, defaultProtocol);
+        // console.log("transformedData", transformedData, defaultProtocol);
 
         return validate(transformedData).then(errors => {
             if (errors.length > 0) {

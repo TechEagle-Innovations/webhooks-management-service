@@ -38,13 +38,13 @@ import { SharedResourceModule } from './shared-resource/shared-resource.module';
     WebhookInvokeModule,
   ],
   controllers: [AppController],
-  providers: [AppService,KafkaAdminService, availableServices,
+  providers: [AppService,KafkaAdminService, availableServices, ClientsModule, SharedResourceModule,
     {
       provide: APP_INTERCEPTOR,
       useFactory: () => new RequestResponseValidationInterceptor,
   }
   ],
-  exports:[]
+  exports:[SharedResourceModule, ClientsModule]
 })
 export class AppModule {}
 
