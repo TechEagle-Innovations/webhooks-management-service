@@ -42,8 +42,8 @@ export class WebhookService {
       }
 
   
-      // Verify if the serviceName exists in available services collection in MongoDB
-      const isServiceAvailable = await this.AvailableServicesModule.findOne({ serviceName: createWebhookDto.serviceName });
+      // Verify if the eventName exists in available services collection in MongoDB
+      const isServiceAvailable = await this.AvailableServicesModule.findOne({ eventName: createWebhookDto.eventName });
       if (!isServiceAvailable) {
         throw new BadRequestException('Service name does not exist in available services');
       }
@@ -59,7 +59,7 @@ export class WebhookService {
         eventName: createWebhookDto.eventName,
         userEmail: user.userEmail,
         callbackLink: createWebhookDto.callbackLink,
-        serviceName: createWebhookDto.serviceName,
+        serviceName: isServiceAvailable.serviceName,
       };
   
       // Create new webhook document
@@ -89,11 +89,11 @@ export class WebhookService {
    * @returns A promise resolving to a boolean indicating whether the webhook already exists.
    */
   async isWebhookAlreadyPresent(createWebhookDto: CreateWebhookDto): Promise<boolean> {
-    const { user, eventName } = createWebhookDto;
+    const { user, eventName,callbackLink } = createWebhookDto;
   
     // Check if a webhook with the same callbackLink, userEmail, and serviceName exists
     const webhook = await this.webhookModel.findOne({
-      //callbackLink,
+      callbackLink,
       userEmail: user.userEmail,
       //serviceName,
       eventName,
@@ -240,7 +240,6 @@ export class WebhookService {
             eventName: updateWebhookDto?.eventName || foundWebhook.eventName,
             userEmail: updateWebhookDto?.user?.userEmail || foundWebhook.userEmail,
             callbackLink: newCallbackLink,
-            serviceName: updateWebhookDto?.serviceName || foundWebhook.serviceName,
           },
         }
       );

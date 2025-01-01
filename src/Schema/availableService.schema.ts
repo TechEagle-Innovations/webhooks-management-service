@@ -9,17 +9,17 @@ export class availableServicesinfo {
 
     @Prop({ required: true })
     serviceName: string;
-  
-    @Prop({ required: true })
+
+    @Prop({ required: true, unique: true })
     eventName: string;
-  
+
     @Prop({ required: true })
     createdBy?: string;
-  
+
     @Prop({ required: true })
     updatedBy?: string;
 
-    @Prop({ required: true, type: Object }) 
+    @Prop({ required: true, type: Object })
     sampleData?: any;
 
 }

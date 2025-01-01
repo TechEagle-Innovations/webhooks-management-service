@@ -26,9 +26,9 @@ export class CreateWebhookDto {
   @IsString()
   callbackLink: string;
 
-  @IsNotEmpty()
-  @IsString()
-  serviceName: any;
+  // @IsNotEmpty()
+  // @IsString()
+  // serviceName: any;
 
   @IsNotEmpty()
   @ValidateNested()  // Ensures the nested DTO is validated
