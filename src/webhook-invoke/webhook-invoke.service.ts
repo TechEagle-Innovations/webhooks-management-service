@@ -37,12 +37,13 @@ export class WebhookInvokeService {
 
       // Send data to each URL concurrently
       const promises = urls.map((url) => this.sendData(url, data));
-
+      console.log(promises);
       // Wait for all promises to settle and collect results
       const result: any = await Promise.allSettled(promises);
       console.log(result);
        // Process the results
-      const rdata = result.map((fresult) => ({ status: fresult.status, fdata: fresult.value.data }));
+      const rdata = result.map((fresult) => (
+        { status: fresult.status, fdata: fresult.value.data }));
       return {
         message: 'Webhook invoked successfully',
         status: "success", data: rdata
