@@ -31,12 +31,15 @@ export class WebhookInvokeService {
       // Find webhooks matching the criteria
       const res = await this.webhookModel.find({ $and: [{ eventName: eventName }, { projectName: projectName }, { userEmail: userEmail }] })
        // Extract callback URLs from the found webhooks
-       
+         
       const urls = res.map((webhook) => webhook.callbackLink);
       console.log(urls);
-
+      const dataToSend={
+        eventName:eventName,
+        shipment:data
+      }
       // Send data to each URL concurrently
-      const promises = urls.map((url) => this.sendData(url, data));
+      const promises = urls.map((url) => this.sendData(url, dataToSend));
       console.log(promises);
       // Wait for all promises to settle and collect results
       const result: any = await Promise.allSettled(promises);
@@ -61,7 +64,7 @@ export class WebhookInvokeService {
    * @returns A promise resolving to the axios response.
    */
 
-  async sendData(url, data) {
+  async sendData(url: string, data:any) {
     return axios(url, {
       method: "POST",
       data: data
