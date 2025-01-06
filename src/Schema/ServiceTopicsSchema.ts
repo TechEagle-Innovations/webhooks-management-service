@@ -19,6 +19,9 @@ export class serviceTopicInfo {
 
     @Prop({ required: true })
     urlMethod: string
+
+    @Prop({required: true, default: true})
+    isAuthRequired: boolean
 }
 
 export const ServiceTopicsSchema = SchemaFactory.createForClass(serviceTopicInfo)

@@ -13,20 +13,23 @@ export const allTopics2 = {
             controller: "/webhook",
             topicName: "webhookService-webhook-create",
             gateWayURL: "/webhook",
-            urlMethod: "POST"
+            urlMethod: "POST",
+            isAuthRequired: true
         },
         {
             controller: "/webhook",
             topicName: "webhookService-webhook-find",
             gateWayURL: "/webhook/find/:id",
-            urlMethod: "GET"
+            urlMethod: "GET",
+            isAuthRequired: true
         },
 
         {
             controller: "/webhook",
             topicName: "webhookService-webhook-findByServicename",
             gateWayURL: "/webhook/findByServiceName",
-            urlMethod: "GET"
+            urlMethod: "GET",
+            isAuthRequired: true
         },
 
 
@@ -35,14 +38,16 @@ export const allTopics2 = {
             controller: "/webhook",
             topicName: "webhookService-webhook-update",
             gateWayURL: "/webhook/update",
-            urlMethod: "PATCH"
+            urlMethod: "PATCH",
+            isAuthRequired: true
         },
 
         {
             controller: "/webhook",
             topicName: "webhookService-webhook-remove",
             gateWayURL: "/webhook/delete",
-            urlMethod: "DELETE"
+            urlMethod: "DELETE",
+            isAuthRequired: true
         },
     ],
 
@@ -51,28 +56,32 @@ export const allTopics2 = {
             controller: "/available-services",
             topicName: "webhookService-availableServices-create",
             gateWayURL: "/available-services",
-            urlMethod: "POST"
+            urlMethod: "POST",
+            isAuthRequired: true
         },
 
         {
             controller: "/available-services",
             topicName: "webhookService-availableServices-find",
             gateWayURL: "/available-services",
-            urlMethod: "GET"
+            urlMethod: "GET",
+            isAuthRequired: true
         },
 
         {
             controller: "/available-services",
             topicName: "webhookService-availableServices-update",
             gateWayURL: "/available-services",
-            urlMethod: "PATCH"
+            urlMethod: "PATCH",
+            isAuthRequired: true
         },
 
         {
             controller: "/available-services",
             topicName: "webhookService-availableServices-remove",
             gateWayURL: "/available-services",
-            urlMethod: "DELETE"
+            urlMethod: "DELETE",
+            isAuthRequired: true
         },
     ],
 
@@ -81,21 +90,24 @@ export const allTopics2 = {
             controller: "/webhook-invoke",
             topicName: "webhookService-invoke-function",
             gateWayURL: "/webhook-invoke",
-            urlMethod: "POST" 
+            urlMethod: "POST" ,
+            isAuthRequired: true
         },
 
         {
             controller: "/webhook-invoke",
             topicName: "webhookService-invoke-check",
             gateWayURL: "/webhook-invoke",
-            urlMethod: "POST" 
+            urlMethod: "POST" ,
+            isAuthRequired: true
         },
 
         {
             controller: "/webhook-invoke",
             topicName: "webhookService-invoke-test",
             gateWayURL: "/webhook-invoke",
-            urlMethod: "POST" 
+            urlMethod: "POST" ,
+            isAuthRequired: true
         },
 
 
@@ -107,7 +119,8 @@ export const allTopics2 = {
             controller: "/",
             topicName: "webhookService-app-registerEvents",
             gateWayURL: "/active-service-event",
-            urlMethod: "POST"
+            urlMethod: "POST",
+            isAuthRequired: true
         },
     ],
 
