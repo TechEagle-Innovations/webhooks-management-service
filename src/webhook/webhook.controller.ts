@@ -58,7 +58,6 @@ export class WebhookController {
    const { serviceName} = request.body;
    const { projectName} = request.body;
   
-  
     return this.webhookService.findByServiceName(request,serviceName, protocol);
   }
 
@@ -66,7 +65,6 @@ export class WebhookController {
   update(@Payload() request: OnRequest, protocol= defaultProtocol) {
     return this.webhookService.update(request.body.id, request.body, protocol);
   }
-
 
   @MessagePattern('webhookService-webhook-remove')
   async remove(@Payload() request: RemoveWebhookDtoRequest, protocol= defaultProtocol) {

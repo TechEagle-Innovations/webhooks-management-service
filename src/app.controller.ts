@@ -187,7 +187,8 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap, Befo
   }
 
   async broadcast(status) {
-    console.log("message Broadcast");
+    try {
+      console.log("message Broadcast");
     const topic = "service-activity"
     const payload = {
       topic: "service-activity",
@@ -204,6 +205,10 @@ export class AppController implements OnModuleInit, OnApplicationBootstrap, Befo
     const fistrresp= await firstValueFrom(kafkaResp);
     console.log("kafkaResp", fistrresp)
     return true
+    } catch (error) {
+       console.log("Brodcast Error", error)
+    }
+    
   }
 
   @MessagePattern("service-activity")
