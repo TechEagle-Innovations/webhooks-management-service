@@ -12,14 +12,14 @@ export const allTopics2 = {
         {
             controller: "/webhook",
             topicName: "webhookService-webhook-create",
-            gateWayURL: "/webhook",
+            gateWayURL: "/",
             urlMethod: "POST",
             isAuthRequired: true
         },
         {
             controller: "/webhook",
             topicName: "webhookService-webhook-find",
-            gateWayURL: "/webhook/find/:id",
+            gateWayURL: "/find/:id",
             urlMethod: "GET",
             isAuthRequired: true
         },
@@ -27,7 +27,7 @@ export const allTopics2 = {
         {
             controller: "/webhook",
             topicName: "webhookService-webhook-findByServicename",
-            gateWayURL: "/webhook/findByServiceName",
+            gateWayURL: "/findByServiceName",
             urlMethod: "GET",
             isAuthRequired: true
         },
@@ -37,7 +37,7 @@ export const allTopics2 = {
         {
             controller: "/webhook",
             topicName: "webhookService-webhook-update",
-            gateWayURL: "/webhook/update",
+            gateWayURL: "/update",
             urlMethod: "PATCH",
             isAuthRequired: true
         },
@@ -45,7 +45,7 @@ export const allTopics2 = {
         {
             controller: "/webhook",
             topicName: "webhookService-webhook-remove",
-            gateWayURL: "/webhook/delete",
+            gateWayURL: "/delete",
             urlMethod: "DELETE",
             isAuthRequired: true
         },
