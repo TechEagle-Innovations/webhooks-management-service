@@ -19,7 +19,7 @@ const serviceFunctionMap = {
 
 const defaultProtocol= 'rpc'
 
-@Controller('webhook')
+@Controller('')
 export class WebhookController {
   constructor(private readonly webhookService: WebhookService) { }
 

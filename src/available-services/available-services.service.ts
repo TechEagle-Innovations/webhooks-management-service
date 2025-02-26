@@ -127,7 +127,7 @@ export class availableServices {
       }
 
       // Return successful response with found webhooks
-      return { status: "success", message: "All webhook received successfully", data: findAllwebhook };
+      return { status: "success", message: "All webhook received successfully", data: [ ...findAllwebhook.map((item)=> item.eventName)] };
     } catch (err) {
       console.log(err);
       const message = err.response.message;
