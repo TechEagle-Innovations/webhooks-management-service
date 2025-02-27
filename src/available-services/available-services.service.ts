@@ -123,7 +123,7 @@ export class availableServices {
       // Check if webhooks were found
       if (!findAllwebhook.length) {
         //return { status: "failed", message: "Unable to get webhook" };
-        throw new NotFoundException('Error in getting available services');
+        throw new NotFoundException('Events Not Found');
       }
 
       // Return successful response with found webhooks
